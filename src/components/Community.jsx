@@ -22,8 +22,8 @@ const Community = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
         <GlassCard className="glass-card flex flex-col items-center text-center p-12 hover:-translate-y-2">
-          <div className="w-20 h-20 rounded-3xl bg-prism-cyan/10 flex items-center justify-center mb-10 shadow-inner">
-            <Users className="w-10 h-10 text-prism-cyan" />
+          <div className="w-20 h-20 rounded-3xl bg-teal-accent/10 flex items-center justify-center mb-10 shadow-inner">
+            <Users className="w-10 h-10 text-teal-accent" />
           </div>
           <h3 className="text-3xl font-bold mb-6">12k+ Members</h3>
           <p className="text-zinc-500 text-lg leading-relaxed font-medium">

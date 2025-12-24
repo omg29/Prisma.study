@@ -30,43 +30,49 @@ const Navbar = () => {
   return (
     <div className="fixed top-8 left-0 w-full z-50 px-6 flex justify-center">
       <motion.nav
-        style={{ backgroundColor, borderColor: borderOpacity }}
-        className="flex items-center justify-between w-full max-w-5xl px-10 py-5 rounded-full border border-white/10 relative overflow-hidden transition-all duration-500"
+        className="flex items-center justify-between w-full max-w-6xl px-12 py-6 rounded-full border relative overflow-hidden transition-all duration-700 shadow-2xl"
+        style={{
+          backgroundColor,
+          borderColor: 'rgba(148, 163, 184, 0.15)',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05)',
+        }}
       >
-        {/* Liquid Glass Layer */}
+        {/* Enhanced Liquid Glass Layer */}
         <div 
-          className="absolute inset-0 z-0 opacity-80"
+          className="absolute inset-0 z-0"
           style={{ 
-            backdropFilter: "blur(5px)",
-            filter: "url(#glass-distortion)",
-            background: "rgba(255, 255, 255, 0.05)",
+            backdropFilter: "blur(16px) saturate(180%)",
+            background: "linear-gradient(135deg, rgba(26, 31, 46, 0.6) 0%, rgba(10, 14, 26, 0.8) 100%)",
           }}
         />
 
-        <div className="relative z-10 flex items-center gap-3 group cursor-pointer">
-          <div className="w-8 h-8 flex items-center justify-center">
-            <img src="/logo.svg" alt="Prisma Logo" className="w-full h-full object-contain" />
+        <div className="relative z-10 flex items-center gap-4 group cursor-pointer">
+          <div className="w-9 h-9 flex items-center justify-center transition-transform duration-500 group-hover:scale-110 group-hover:rotate-12">
+            <img src="/logo.svg" alt="Prisma Logo" className="w-full h-full object-contain drop-shadow-lg" />
           </div>
-          <span className="text-3xl font-medium tracking-tighter text-white brand-font">
-            Prisma<span className="text-prism-cyan">.</span>
+          <span className="text-3xl font-medium tracking-tight text-white brand-font transition-all duration-300 group-hover:text-teal-accent">
+            Prisma.
           </span>
         </div>
 
-        <div className="relative z-10 hidden md:flex items-center gap-12">
+        <div className="relative z-10 hidden md:flex items-center gap-14">
           {menuItems.map((item) => (
             <a
               key={item}
               href={`#${item.toLowerCase()}`}
-              className="nav-link"
+              className="text-sm font-semibold uppercase tracking-[0.15em] text-slate-300 hover:text-white transition-all duration-300 relative group"
             >
-              {item}
+              <span className="relative z-10">{item}</span>
+              <span className="absolute bottom-0 left-0 w-0 h-[2px] bg-gradient-to-r from-teal-accent to-cyan-bright group-hover:w-full transition-all duration-500"></span>
             </a>
           ))}
         </div>
 
-        <div className="relative z-10 flex items-center gap-8">
-          <button className="text-xs font-bold uppercase tracking-widest text-zinc-300 hover:text-white transition-colors">Login</button>
-          <button className="btn-prismatic text-[10px] px-8 py-2.5 font-black uppercase tracking-[0.2em]">
+        <div className="relative z-10 flex items-center gap-6">
+          <button className="text-xs font-bold uppercase tracking-[0.2em] text-slate-300 hover:text-white transition-all duration-300 hover:scale-105">
+            Login
+          </button>
+          <button className="btn-prismatic text-[10px] px-10 py-3 font-black uppercase tracking-[0.25em] hover:scale-105 hover:shadow-[0_0_30px_rgba(20,184,166,0.4)] transition-all duration-500">
             <span>Sign Up</span>
           </button>
         </div>
