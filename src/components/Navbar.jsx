@@ -43,7 +43,10 @@ const Navbar = () => {
           }}
         />
 
-        <div className="relative z-10 flex items-center gap-2 group cursor-pointer">
+        <div className="relative z-10 flex items-center gap-3 group cursor-pointer">
+          <div className="w-8 h-8 flex items-center justify-center">
+            <img src="/logo.svg" alt="Prisma Logo" className="w-full h-full object-contain" />
+          </div>
           <span className="text-3xl font-medium tracking-tighter text-white brand-font">
             Prisma<span className="text-prism-cyan">.</span>
           </span>

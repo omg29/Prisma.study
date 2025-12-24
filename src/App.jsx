@@ -23,7 +23,8 @@ function App() {
       </main>
 
       <footer className="py-32 px-6 border-t border-white/5 text-center relative z-10">
-        <div className="mb-8">
+        <div className="mb-8 flex items-center justify-center gap-4">
+          <img src="/logo.svg" alt="Prisma Logo" className="w-10 h-10 opacity-80" />
           <span className="text-4xl brand-font text-white">Prisma<span className="text-prism-cyan">.</span></span>
         </div>
         <p className="text-zinc-500 text-[10px] font-bold uppercase tracking-[0.3em]">

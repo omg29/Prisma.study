@@ -23,8 +23,8 @@ const Hero = () => {
         </h1>
         
         <p className="max-w-2xl mx-auto text-xl md:text-2xl text-zinc-300 mb-16 leading-relaxed font-medium">
-          The high-performance spatial canvas for your notes. 
-          Build complex knowledge structures at the speed of thought.
+          Transform your study experience with Prisma. 
+          Break down complex topics into crystal-clear understandings.
         </p>
         
         <div className="flex flex-col sm:flex-row items-center justify-center gap-10">
