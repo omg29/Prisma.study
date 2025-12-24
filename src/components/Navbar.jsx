@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
+import { LiquidButton } from './ui/LiquidButton';
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -50,7 +51,7 @@ const Navbar = () => {
           <div className="w-9 h-9 flex items-center justify-center transition-transform duration-500 group-hover:scale-110 group-hover:rotate-12">
             <img src="/logo.svg" alt="Prisma Logo" className="w-full h-full object-contain drop-shadow-lg" />
           </div>
-          <span className="text-3xl font-medium tracking-tight text-white brand-font transition-all duration-300 group-hover:text-teal-accent">
+          <span className="text-3xl font-medium tracking-tight text-white brand-font transition-all duration-300 group-hover:text-cyan-bright">
             Prisma.
           </span>
         </div>
@@ -63,7 +64,7 @@ const Navbar = () => {
               className="text-sm font-semibold uppercase tracking-[0.15em] text-slate-300 hover:text-white transition-all duration-300 relative group"
             >
               <span className="relative z-10">{item}</span>
-              <span className="absolute bottom-0 left-0 w-0 h-[2px] bg-gradient-to-r from-teal-accent to-cyan-bright group-hover:w-full transition-all duration-500"></span>
+              <span className="absolute bottom-0 left-0 w-0 h-[2px] bg-gradient-to-r from-cyan-bright via-magenta to-purple group-hover:w-full transition-all duration-500"></span>
             </a>
           ))}
         </div>
@@ -72,9 +73,9 @@ const Navbar = () => {
           <button className="text-xs font-bold uppercase tracking-[0.2em] text-slate-300 hover:text-white transition-all duration-300 hover:scale-105">
             Login
           </button>
-          <button className="btn-prismatic text-[10px] px-10 py-3 font-black uppercase tracking-[0.25em] hover:scale-105 hover:shadow-[0_0_30px_rgba(20,184,166,0.4)] transition-all duration-500">
-            <span>Sign Up</span>
-          </button>
+          <LiquidButton variant="primary" size="default">
+            Sign Up
+          </LiquidButton>
         </div>
       </motion.nav>
     </div>

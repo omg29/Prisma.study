@@ -19,7 +19,7 @@ export function ShaderAnimation() {
       }
     `
 
-    // Fragment shader
+    // Fragment shader with Prismatic Colors (Cyan & Magenta)
     const fragmentShader = `
       #define TWO_PI 6.2831853072
       #define PI 3.14159265359
@@ -33,14 +33,29 @@ export function ShaderAnimation() {
         float t = time*0.05;
         float lineWidth = 0.002;
 
-        vec3 color = vec3(0.0);
-        for(int j = 0; j < 3; j++){
-          for(int i=0; i < 5; i++){
-            color[j] += lineWidth*float(i*i) / abs(fract(t - 0.01*float(j)+float(i)*0.01)*5.0 - length(uv) + mod(uv.x+uv.y, 0.2));
-          }
+        // Cyan color (#22D3EE) = rgb(34, 211, 238) normalized
+        vec3 cyan = vec3(0.133, 0.827, 0.933);
+        
+        // Magenta color (#E879F9) = rgb(232, 121, 249) normalized
+        vec3 magenta = vec3(0.910, 0.475, 0.976);
+        
+        // Purple accent (#A78BFA) = rgb(167, 139, 250) normalized
+        vec3 purple = vec3(0.655, 0.545, 0.980);
+
+        float intensity = 0.0;
+        for(int i=0; i < 5; i++){
+          intensity += lineWidth*float(i*i) / abs(fract(t - 0.01*float(i))*5.0 - length(uv) + mod(uv.x+uv.y, 0.2));
         }
         
-        gl_FragColor = vec4(color[0],color[1],color[2],1.0);
+        // Mix between cyan, magenta, and purple based on position and time
+        float mixFactor = sin(length(uv) * 3.0 - t * 2.0) * 0.5 + 0.5;
+        float mixFactor2 = cos(uv.x * 2.0 + t) * 0.5 + 0.5;
+        
+        vec3 color1 = mix(cyan, magenta, mixFactor);
+        vec3 color2 = mix(magenta, purple, mixFactor2);
+        vec3 finalColor = mix(color1, color2, 0.5) * intensity;
+        
+        gl_FragColor = vec4(finalColor, 1.0);
       }
     `
 

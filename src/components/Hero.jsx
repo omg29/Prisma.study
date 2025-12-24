@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { GlassButton } from './ui/LiquidGlass';
+import { LiquidButton } from './ui/LiquidButton';
 
 const Hero = () => {
   return (
@@ -10,8 +10,8 @@ const Hero = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
       >
-        <div className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full border border-teal-accent/20 bg-teal-accent/5 backdrop-blur-md mb-12 shadow-lg">
-          <span className="w-2 h-2 rounded-full bg-teal-accent animate-pulse shadow-[0_0_10px_rgba(20,184,166,0.6)]" />
+        <div className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full border border-cyan-bright/20 bg-cyan-bright/5 backdrop-blur-md mb-12 shadow-lg">
+          <span className="w-2 h-2 rounded-full bg-cyan-bright animate-pulse shadow-[0_0_10px_rgba(34,211,238,0.6)]" />
           <span className="text-[10px] font-bold tracking-[0.35em] uppercase text-slate-300">
             v1.0 Early Access
           </span>
@@ -28,20 +28,20 @@ const Hero = () => {
         </p>
         
         <div className="flex flex-col sm:flex-row items-center justify-center gap-12">
-          <GlassButton href="#dashboard">
-            <div className="flex items-center gap-4 text-white text-lg font-bold">
+          <LiquidButton variant="primary" size="xl" asChild>
+            <a href="#dashboard" className="flex items-center gap-4 text-white text-lg font-bold">
               <span>Launch Dashboard</span>
-              <div className="w-9 h-9 rounded-full bg-teal-accent/20 flex items-center justify-center border border-teal-accent/40 transition-all duration-300 group-hover:bg-teal-accent/30">
+              <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center border border-white/40 transition-all duration-300 group-hover:bg-white/30">
                 <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="3">
                   <path d="M5 12h14M12 5l7 7-7 7" />
                 </svg>
               </div>
-            </div>
-          </GlassButton>
+            </a>
+          </LiquidButton>
           
           <button className="text-slate-400 hover:text-white transition-all flex items-center gap-5 group font-bold uppercase tracking-[0.25em] text-[11px] hover:scale-105 duration-300">
             Watch Demo
-            <div className="w-14 h-[2px] bg-slate-700 group-hover:w-24 transition-all group-hover:bg-gradient-to-r group-hover:from-teal-accent group-hover:to-cyan-bright" />
+            <div className="w-14 h-[2px] bg-slate-700 group-hover:w-24 transition-all group-hover:bg-gradient-to-r group-hover:from-cyan-bright group-hover:to-magenta" />
           </button>
         </div>
       </motion.div>
