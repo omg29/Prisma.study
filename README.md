@@ -1,18 +1,48 @@
-# React + Vite
+# Prisma.study
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Refract your potential with a spatial learning canvas. Prisma.study is a high-performance visual platform for active learning, structured flow, and collaborative knowledge sharing, now powered by a state-of-the-art **Liquid Glass** interface.
 
-Currently, two official plugins are available:
+![Prisma Aesthetic](public/vite.svg) *Conceptual Branding*
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## ✨ Features
 
-## React Compiler
+- **Liquid Glass Interface**: A custom-engineered design system using SVG filters and multi-layered glassmorphism to create a fluid, premium physical feel.
+- **Three.js Shader Background**: A hardware-accelerated WebGL shader background providing a dynamic, evolving prismatic field.
+- **Spatial Learning Canvas**: A high-performance spatial environment for building complex knowledge structures at the speed of thought.
+- **Modern Technical Stack**: Precision-built with the latest web technologies for 60fps responsiveness.
+- **Unified Branding**: A balanced typography system pairing **Inter** (technical clarity) with **Instrument Serif** (academic elegance).
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+## 🚀 Tech Stack
 
-Note: This will impact Vite dev & build performances.
+- **Framework**: [React](https://reactjs.org/) + [Vite](https://vitejs.dev/)
+- **Visuals**: [Three.js](https://threejs.org/) (Custom Shader Engine), [Framer Motion](https://www.framer.com/motion/)
+- **Styling**: [Tailwind CSS 4.0](https://tailwindcss.com/)
+- **Icons**: [Lucide React](https://lucide.dev/)
+- **Fonts**: Inter, Instrument Serif, Plus Jakarta Sans
 
-## Expanding the ESLint configuration
+## 🛠️ Local Development
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/omg29/Prisma.study.git
+   cd Prisma.study
+   ```
+
+2. **Install dependencies**:
+   ```bash
+   npm install
+   ```
+
+3. **Start the development server**:
+   ```bash
+   npm run dev
+   ```
+
+4. **Build for production**:
+   ```bash
+   npm run build
+   ```
+
+## 📜 License
+
+© 2025 Prisma. Refract your potential. All rights reserved.

@@ -1,38 +1,74 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
 
 const Navbar = () => {
-  const menuItems = ['Methodology', 'Library', 'Community', 'Pricing'];
+  const [isScrolled, setIsScrolled] = useState(false);
+  const { scrollY } = useScroll();
+  
+  const backgroundColor = useTransform(
+    scrollY,
+    [0, 100],
+    ['rgba(2, 2, 2, 0)', 'rgba(2, 2, 2, 0.4)']
+  );
+
+  const borderOpacity = useTransform(
+    scrollY,
+    [0, 100],
+    ['rgba(255, 255, 255, 0.05)', 'rgba(255, 255, 255, 0.12)']
+  );
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const menuItems = ['Methodology', 'Community', 'Founders', 'Dashboard'];
 
   return (
-    <nav className="fixed top-0 left-0 w-full z-50 px-6 py-4 flex items-center justify-between backdrop-blur-md bg-transparent border-b border-white/5">
-      <div className="flex items-center gap-2">
-        <span className="text-3xl font-medium tracking-normal text-white" style={{ fontFamily: "'Pinyon Script', cursive" }}>
-          Prisma<span className="text-prism-cyan">.</span>
-        </span>
-      </div>
+    <div className="fixed top-8 left-0 w-full z-50 px-6 flex justify-center">
+      <motion.nav
+        style={{ backgroundColor, borderColor: borderOpacity }}
+        className="flex items-center justify-between w-full max-w-5xl px-10 py-5 rounded-full border border-white/10 relative overflow-hidden transition-all duration-500"
+      >
+        {/* Liquid Glass Layer */}
+        <div 
+          className="absolute inset-0 z-0 opacity-80"
+          style={{ 
+            backdropFilter: "blur(5px)",
+            filter: "url(#glass-distortion)",
+            background: "rgba(255, 255, 255, 0.05)",
+          }}
+        />
 
-      <div className="hidden md:flex items-center gap-8">
-        {menuItems.map((item) => (
-          <a
-            key={item}
-            href={`#${item.toLowerCase()}`}
-            className="relative text-sm font-medium text-white/70 hover:text-white transition-colors group"
-          >
-            {item}
-            <motion.div
-              className="absolute -bottom-1 left-0 w-0 h-[1px] bg-gradient-to-r from-prism-cyan to-transparent group-hover:w-full transition-all duration-300"
-              layoutId="underline"
-            />
-          </a>
-        ))}
-      </div>
+        <div className="relative z-10 flex items-center gap-2 group cursor-pointer">
+          <span className="text-3xl font-medium tracking-tighter text-white brand-font">
+            Prisma<span className="text-prism-cyan">.</span>
+          </span>
+        </div>
 
-      <div className="flex items-center gap-4">
-        <button className="btn-ghost text-sm">Login</button>
-        <button className="btn-liquid-light text-sm text-white">Sign Up</button>
-      </div>
-    </nav>
+        <div className="relative z-10 hidden md:flex items-center gap-12">
+          {menuItems.map((item) => (
+            <a
+              key={item}
+              href={`#${item.toLowerCase()}`}
+              className="nav-link"
+            >
+              {item}
+            </a>
+          ))}
+        </div>
+
+        <div className="relative z-10 flex items-center gap-8">
+          <button className="text-xs font-bold uppercase tracking-widest text-zinc-300 hover:text-white transition-colors">Login</button>
+          <button className="btn-prismatic text-[10px] px-8 py-2.5 font-black uppercase tracking-[0.2em]">
+            <span>Sign Up</span>
+          </button>
+        </div>
+      </motion.nav>
+    </div>
   );
 };
 
