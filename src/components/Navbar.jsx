@@ -11,13 +11,16 @@ const Navbar = () => {
   const backgroundColor = useTransform(
     scrollY,
     [0, 100],
-    ['rgba(2, 2, 2, 0)', 'rgba(2, 2, 2, 0.4)']
+    ['rgba(255, 255, 255, 0.02)', 'rgba(255, 255, 255, 0.08)']
   );
 
-  const borderOpacity = useTransform(
+  const navShadow = useTransform(
     scrollY,
     [0, 100],
-    ['rgba(255, 255, 255, 0.05)', 'rgba(255, 255, 255, 0.12)']
+    [
+      '0 0 6px rgba(0,0,0,0.03), 0 2px 6px rgba(0,0,0,0.08), inset 3px 3px 0.5px -3px rgba(255,255,255,0.1), inset -3px -3px 0.5px -3px rgba(255,255,255,0.05), inset 1px 1px 1px -0.5px rgba(255,255,255,0.2), inset -1px -1px 1px -0.5px rgba(255,255,255,0.2), 0 0 12px rgba(255,255,255,0.05)',
+      '0 10px 30px rgba(0, 0, 0, 0.5), 0 0 10px rgba(255, 255, 255, 0.1), inset 3px 3px 0.5px -3px rgba(255,255,255,0.3), inset -3px -3px 0.5px -3px rgba(255,255,255,0.2)'
+    ]
   );
 
   useEffect(() => {
@@ -33,21 +36,23 @@ const Navbar = () => {
   return (
     <div className="fixed top-8 left-0 w-full z-50 px-6 flex justify-center">
       <motion.nav
-        className="flex items-center justify-between w-full max-w-6xl px-12 py-6 rounded-full border relative overflow-hidden transition-all duration-700 shadow-2xl"
+        className="flex items-center justify-between w-full max-w-6xl px-12 py-5 rounded-full border border-white/10 relative transition-all duration-700"
         style={{
           backgroundColor,
-          borderColor: 'rgba(148, 163, 184, 0.15)',
-          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05)',
+          boxShadow: navShadow,
         }}
       >
-        {/* Enhanced Liquid Glass Layer */}
+        {/* Liquid Glass Base Layer */}
         <div
-          className="absolute inset-0 z-0"
-          style={{
-            backdropFilter: "blur(16px) saturate(180%)",
-            background: "linear-gradient(135deg, rgba(26, 31, 46, 0.6) 0%, rgba(10, 14, 26, 0.8) 100%)",
+          className="absolute inset-0 z-0 overflow-hidden rounded-full"
+          style={{ 
+            backdropFilter: 'url("#navbar-liquid-glass") blur(12px)',
+            background: "linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%)",
           }}
         />
+        
+        {/* Glow Effect */}
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.02] to-transparent pointer-events-none" />
 
         <Link to="/" className="relative z-10 flex items-center gap-4 group cursor-pointer">
           <div className="w-9 h-9 flex items-center justify-center transition-transform duration-500 group-hover:scale-110 group-hover:rotate-12">
@@ -60,9 +65,8 @@ const Navbar = () => {
 
         <div className="relative z-10 hidden md:flex items-center gap-14">
           {menuItems.map((item) => {
-            const isPage = item === 'Community';
-            const path = isPage ? '/community' : `/#${item.toLowerCase()}`;
-            const isActive = isPage && location.pathname === '/community';
+            const path = `/${item.toLowerCase()}`;
+            const isActive = location.pathname === path;
 
             return (
               <Link
@@ -87,6 +91,37 @@ const Navbar = () => {
             Sign Up
           </LiquidButton>
         </div>
+
+        <svg className="hidden">
+          <defs>
+            <filter
+              id="navbar-liquid-glass"
+              x="-20%"
+              y="-20%"
+              width="140%"
+              height="140%"
+              colorInterpolationFilters="sRGB"
+            >
+              <feTurbulence
+                type="fractalNoise"
+                baseFrequency="0.015 0.015"
+                numOctaves="2"
+                seed="3"
+                result="turbulence"
+              />
+              <feGaussianBlur in="turbulence" stdDeviation="4" result="blurredNoise" />
+              <feDisplacementMap
+                in="SourceGraphic"
+                in2="blurredNoise"
+                scale="15"
+                xChannelSelector="R"
+                yChannelSelector="B"
+                result="displaced"
+              />
+              <feGaussianBlur in="displaced" stdDeviation="1" result="finalBlur" />
+            </filter>
+          </defs>
+        </svg>
       </motion.nav>
     </div>
   );
