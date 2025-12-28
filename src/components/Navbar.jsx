@@ -2,11 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { Link, useLocation } from 'react-router-dom';
 import { LiquidButton } from './ui/LiquidButton';
+import { useAuth } from '../context/AuthContext';
+import ProfilePopover from './ProfilePopover';
 
 const Navbar = () => {
-  const [isScrolled, setIsScrolled] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const location = useLocation();
   const { scrollY } = useScroll();
+  const { user, isAuthenticated } = useAuth();
 
   const backgroundColor = useTransform(
     scrollY,
@@ -22,14 +25,6 @@ const Navbar = () => {
       '0 10px 30px rgba(0, 0, 0, 0.5), 0 0 10px rgba(255, 255, 255, 0.1), inset 3px 3px 0.5px -3px rgba(255,255,255,0.3), inset -3px -3px 0.5px -3px rgba(255,255,255,0.2)'
     ]
   );
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   const menuItems = ['Methodology', 'Community', 'Founders', 'Dashboard'];
 
@@ -84,12 +79,45 @@ const Navbar = () => {
         </div>
 
         <div className="relative z-10 flex items-center gap-6">
-          <button className="text-xs font-bold uppercase tracking-[0.2em] text-slate-300 hover:text-white transition-all duration-300 hover:scale-105">
-            Login
-          </button>
-          <LiquidButton variant="primary" size="default">
-            Sign Up
-          </LiquidButton>
+          {isAuthenticated ? (
+            <div className="relative">
+              <button 
+                onClick={() => setIsProfileOpen(!isProfileOpen)}
+                className="flex items-center gap-4 px-4 py-2 rounded-2xl bg-white/[0.03] border border-white/5 hover:bg-white/[0.08] transition-all duration-300 group cursor-pointer"
+              >
+                <div className="relative">
+                  <div className="w-9 h-9 rounded-full bg-gradient-to-br from-cyan-bright via-purple to-magenta flex items-center justify-center font-bold text-white shadow-lg group-hover:scale-105 transition-transform duration-500 text-xs">
+                    {user?.name?.split(' ').map(n => n[0]).join('')}
+                  </div>
+                  <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-green-500 border-2 border-black/20" />
+                </div>
+                <div className="text-left hidden lg:block">
+                  <p className="text-[11px] font-bold text-white leading-tight">{user?.name}</p>
+                  <p className="text-[9px] text-zinc-500 uppercase tracking-widest font-black leading-tight">Level {user?.level}</p>
+                </div>
+              </button>
+              
+              <ProfilePopover isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} />
+            </div>
+          ) : (
+            <>
+              <Link 
+                to="/login"
+                className="text-xs font-bold uppercase tracking-[0.2em] text-slate-300 hover:text-white transition-all duration-300 hover:scale-105"
+              >
+                Login
+              </Link>
+              <Link to="/signup">
+                <LiquidButton 
+                  variant="primary" 
+                  size="default"
+                  className="!from-[#43C6F1] !to-[#E063F1] hover:shadow-[0_0_20px_rgba(67,198,241,0.4)] transition-shadow"
+                >
+                  Sign Up
+                </LiquidButton>
+              </Link>
+            </>
+          )}
         </div>
 
         <svg className="hidden">
