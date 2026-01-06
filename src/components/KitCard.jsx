@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  MoreVertical, 
-  Clock, 
-  Plus, 
-  Youtube, 
-  BookOpen, 
-  Upload, 
+import {
+  MoreVertical,
+  Clock,
+  Plus,
+  Youtube,
+  BookOpen,
+  Upload,
   Sparkles,
   Trash2,
   Share2,
@@ -24,7 +24,7 @@ const SOURCE_ICONS = {
   manual: <Sparkles size={14} className="text-purple" />,
 };
 
-const KitCard = ({ kit, onDelete }) => {
+const KitCard = ({ kit, onDelete, onOpenStudyHub }) => {
   const [showMenu, setShowMenu] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const { folders } = useLibrary();
@@ -34,19 +34,22 @@ const KitCard = ({ kit, onDelete }) => {
 
   return (
     <>
-      <GlassCard className="p-8 group cursor-pointer hover:border-cyan-bright/40 transition-all duration-700 relative overflow-hidden bg-gradient-to-br from-white/[0.01] to-transparent h-full flex flex-col">
+      <GlassCard
+        onClick={() => onOpenStudyHub(kit)}
+        className="p-8 group cursor-pointer hover:border-cyan-bright/40 transition-all duration-700 relative overflow-hidden bg-gradient-to-br from-white/[0.01] to-transparent h-full flex flex-col"
+      >
         <div className="flex items-start justify-between mb-8 relative z-20">
           <div className="flex flex-wrap gap-2">
             {kit.sources.map(source => (
-               <div key={source} className="p-2.5 rounded-xl bg-white/[0.03] border border-white/5 shadow-sm">
-                  {SOURCE_ICONS[source]}
-               </div>
+              <div key={source} className="p-2.5 rounded-xl bg-white/[0.03] border border-white/5 shadow-sm">
+                {SOURCE_ICONS[source]}
+              </div>
             ))}
           </div>
-          
+
           <div className="flex flex-col items-end gap-2">
             <div className="relative">
-              <button 
+              <button
                 onClick={(e) => {
                   e.stopPropagation();
                   setShowMenu(!showMenu);
@@ -55,7 +58,7 @@ const KitCard = ({ kit, onDelete }) => {
               >
                 <MoreVertical size={16} className="text-zinc-500" />
               </button>
-              
+
               <AnimatePresence>
                 {showMenu && (
                   <>
@@ -73,8 +76,11 @@ const KitCard = ({ kit, onDelete }) => {
                         <Share2 size={12} /> Share
                       </button>
                       <div className="h-px bg-white/5 my-1" />
-                      <button 
-                        onClick={() => onDelete(kit.id)}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onDelete(kit.id);
+                        }}
                         className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-red-500/10 text-[10px] font-bold uppercase tracking-wider text-red-400 transition-all"
                       >
                         <Trash2 size={12} /> Delete
@@ -110,7 +116,7 @@ const KitCard = ({ kit, onDelete }) => {
               <span className="text-[9px] font-black text-zinc-600 uppercase tracking-[0.2em] mb-1">Mastery Progress</span>
               <span className="text-2xl font-black text-white tracking-tighter">{kit.progress}%</span>
             </div>
-            <button 
+            <button
               onClick={(e) => {
                 e.stopPropagation();
                 setIsAddModalOpen(true);
@@ -121,7 +127,7 @@ const KitCard = ({ kit, onDelete }) => {
             </button>
           </div>
           <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden shadow-inner">
-            <motion.div 
+            <motion.div
               initial={{ width: 0 }}
               animate={{ width: `${kit.progress}%` }}
               className="h-full bg-gradient-to-r from-[#43C6F1] to-[#E063F1] relative"
@@ -132,9 +138,9 @@ const KitCard = ({ kit, onDelete }) => {
         </div>
       </GlassCard>
 
-      <CreateKitModal 
-        isOpen={isAddModalOpen} 
-        onClose={() => setIsAddModalOpen(false)} 
+      <CreateKitModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
         kitId={kit.id}
       />
     </>

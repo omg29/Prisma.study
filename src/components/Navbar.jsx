@@ -9,7 +9,7 @@ const Navbar = () => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const location = useLocation();
   const { scrollY } = useScroll();
-  const { user, isAuthenticated } = useAuth();
+  const { user, rank, level, isAuthenticated } = useAuth();
 
   const backgroundColor = useTransform(
     scrollY,
@@ -40,12 +40,12 @@ const Navbar = () => {
         {/* Liquid Glass Base Layer */}
         <div
           className="absolute inset-0 z-0 overflow-hidden rounded-full"
-          style={{ 
+          style={{
             backdropFilter: 'url("#navbar-liquid-glass") blur(12px)',
             background: "linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%)",
           }}
         />
-        
+
         {/* Glow Effect */}
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.02] to-transparent pointer-events-none" />
 
@@ -81,7 +81,7 @@ const Navbar = () => {
         <div className="relative z-10 flex items-center gap-6">
           {isAuthenticated ? (
             <div className="relative">
-              <button 
+              <button
                 onClick={() => setIsProfileOpen(!isProfileOpen)}
                 className="flex items-center gap-4 px-4 py-2 rounded-2xl bg-white/[0.03] border border-white/5 hover:bg-white/[0.08] transition-all duration-300 group cursor-pointer"
               >
@@ -93,23 +93,23 @@ const Navbar = () => {
                 </div>
                 <div className="text-left hidden lg:block">
                   <p className="text-[11px] font-bold text-white leading-tight">{user?.name}</p>
-                  <p className="text-[9px] text-zinc-500 uppercase tracking-widest font-black leading-tight">Level {user?.level}</p>
+                  <p className="text-[9px] text-zinc-500 uppercase tracking-widest font-black leading-tight">Level {level}</p>
                 </div>
               </button>
-              
+
               <ProfilePopover isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} />
             </div>
           ) : (
             <>
-              <Link 
+              <Link
                 to="/login"
                 className="text-xs font-bold uppercase tracking-[0.2em] text-slate-300 hover:text-white transition-all duration-300 hover:scale-105"
               >
                 Login
               </Link>
               <Link to="/signup">
-                <LiquidButton 
-                  variant="primary" 
+                <LiquidButton
+                  variant="primary"
                   size="default"
                   className="!from-[#43C6F1] !to-[#E063F1] hover:shadow-[0_0_20px_rgba(67,198,241,0.4)] transition-shadow"
                 >

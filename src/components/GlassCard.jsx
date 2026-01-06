@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { motion, useMotionValue, useSpring } from 'framer-motion';
 
-const GlassCard = ({ children, className = "" }) => {
+const GlassCard = ({ children, className = "", ...props }) => {
   const [hovered, setHovered] = useState(false);
   const cardRef = useRef(null);
 
@@ -16,17 +16,18 @@ const GlassCard = ({ children, className = "" }) => {
 
   return (
     <motion.div
+      {...props}
       ref={cardRef}
       onMouseMove={handleMouseMove}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       initial={{ opacity: 0, scale: 0.95, y: 20 }}
       whileInView={{ opacity: 1, scale: 1, y: 0 }}
-      transition={{ 
+      transition={{
         type: "spring",
         stiffness: 100,
         damping: 15,
-        mass: 1 
+        mass: 1
       }}
       viewport={{ once: true }}
       className={`relative group overflow-hidden rounded-[2.5rem] transition-all duration-700 ${className}`}
@@ -46,7 +47,7 @@ const GlassCard = ({ children, className = "" }) => {
       <div
         className="absolute inset-0 z-0 bg-gradient-to-br from-white/[0.05] to-transparent pointer-events-none"
       />
-      
+
       {/* Interactive Spotlight */}
       <motion.div
         className="pointer-events-none absolute -inset-px rounded-[2.5rem] transition duration-300 opacity-0 group-hover:opacity-100 z-10"

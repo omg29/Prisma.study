@@ -1,12 +1,12 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
-import { 
-  Trophy, 
-  Zap, 
-  Calendar, 
-  LogOut, 
-  Settings, 
+import {
+  Trophy,
+  Zap,
+  Calendar,
+  LogOut,
+  Settings,
   User as UserIcon,
   ChevronRight,
   Target,
@@ -17,7 +17,7 @@ import GlassCard from './GlassCard';
 import { getRankStyle } from '../utils/rankStyles';
 
 const ProfilePopover = ({ isOpen, onClose }) => {
-  const { user, logout } = useAuth();
+  const { user, rank, level, logout } = useAuth();
 
   if (!user) return null;
 
@@ -44,7 +44,7 @@ const ProfilePopover = ({ isOpen, onClose }) => {
                   </div>
                   <div>
                     <h3 className="font-bold text-white line-clamp-1">{user.name}</h3>
-                    <p className={`text-[10px] uppercase tracking-widest inline-block ${getRankStyle(user.rank)}`}>{user.rank}</p>
+                    <p className={`text-[10px] uppercase tracking-widest inline-block ${getRankStyle(rank)}`}>{rank}</p>
                   </div>
                 </div>
               </div>
@@ -75,18 +75,18 @@ const ProfilePopover = ({ isOpen, onClose }) => {
 
                 {/* 2. All-Time Best Seasonal Rank Box */}
                 <div className="bg-white/[0.03] border border-white/5 rounded-xl p-4">
-                   <p className="text-[8px] font-black text-zinc-500 uppercase tracking-widest mb-2 flex items-center gap-1">
+                  <p className="text-[8px] font-black text-zinc-500 uppercase tracking-widest mb-2 flex items-center gap-1">
                     <Target size={12} className="text-magenta" /> Career Milestone
                   </p>
                   <div className="text-[10px] font-medium text-zinc-400 leading-relaxed">
-                    All-time best seasonal rank: <span className={`inline-block uppercase tracking-tight ${getRankStyle(user.bestSeasonalRank)}`}>{user.bestSeasonalRank}</span>, 
+                    All-time best seasonal rank: <span className={`inline-block uppercase tracking-tight ${getRankStyle(user.bestSeasonalRank)}`}>{user.bestSeasonalRank}</span>,
                     placement: <span className="text-white font-bold">{user.bestSeasonalPlacement}</span> in <span className="text-white font-bold">{user.bestSeasonalPeriod || 'Season 4'}</span>
                   </div>
                 </div>
 
                 {/* 3. Global Combined Box (Rank + Level) */}
                 <div className="grid grid-cols-2 gap-2">
-                   <div className="bg-white/[0.03] border border-white/5 rounded-xl p-3 flex flex-col justify-center">
+                  <div className="bg-white/[0.03] border border-white/5 rounded-xl p-3 flex flex-col justify-center">
                     <p className="text-[8px] font-black text-zinc-500 uppercase tracking-widest mb-1 flex items-center gap-1">
                       <Globe size={10} className="text-purple" /> Global Rank
                     </p>
@@ -96,7 +96,7 @@ const ProfilePopover = ({ isOpen, onClose }) => {
                     <p className="text-[8px] font-black text-zinc-500 uppercase tracking-widest mb-1 flex items-center gap-1">
                       <Zap size={10} className="text-yellow-400" /> All-Time Lvl
                     </p>
-                    <p className="text-xs font-black text-white">{user.allTimeLevel}</p>
+                    <p className="text-xs font-black text-white">{level}</p>
                   </div>
                 </div>
 
@@ -119,7 +119,7 @@ const ProfilePopover = ({ isOpen, onClose }) => {
                   </div>
                   <ChevronRight size={14} className="text-zinc-600 group-hover:text-cyan-bright transition-colors" />
                 </button>
-                <button 
+                <button
                   onClick={logout}
                   className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-red-500/10 text-zinc-400 hover:text-red-400 transition-all group"
                 >

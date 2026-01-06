@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { calculateRankAndLevel } from '../utils/gamification';
 
 const AuthContext = createContext();
 
@@ -7,7 +8,6 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate persistent session check
     const storedUser = localStorage.getItem('prisma_user');
     if (storedUser) {
       setUser(JSON.parse(storedUser));
@@ -15,56 +15,75 @@ export const AuthProvider = ({ children }) => {
     setLoading(false);
   }, []);
 
+  const getAccounts = () => {
+    const accounts = localStorage.getItem('prisma_accounts');
+    return accounts ? JSON.parse(accounts) : [];
+  };
+
+  const gamificationStats = useMemo(() => {
+    return calculateRankAndLevel(user?.xp || 0);
+  }, [user?.xp]);
+
   const login = async (email, password) => {
-    // Mock login logic
     setLoading(true);
-    // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 800));
-    
-    const mockUser = {
-      id: '1',
-      name: 'Jonathan S.',
-      email: email,
-      rank: 'Scholar',
-      level: 24,
-      status: 'Online',
-      joinedAt: '2025-01-15',
-      bestSeasonalRank: 'Diamond II',
-      bestSeasonalPlacement: '#420',
-      bestSeasonalPeriod: 'Season 4',
-      currentSeasonRank: 'Gold III',
-      currentSeasonPlacement: '#1,242',
-      allTimeLevel: 156,
-      allTimePlacement: '#12,420'
-    };
-    
-    localStorage.setItem('prisma_user', JSON.stringify(mockUser));
-    setUser(mockUser);
+
+    const accounts = getAccounts();
+    const account = accounts.find(a => a.email === email && a.password === password);
+
+    if (!account) {
+      setLoading(false);
+      throw new Error('Invalid email or password');
+    }
+
+    // Refresh rank and level on login to ensure consistency with latest formula
+    const { rank, level } = calculateRankAndLevel(account.xp || 0);
+    const updatedAccount = { ...account, rank, level };
+
+    // Don't store password in session
+    const { password: _, ...sessionUser } = updatedAccount;
+
+    localStorage.setItem('prisma_user', JSON.stringify(sessionUser));
+    setUser(sessionUser);
     setLoading(false);
-    return mockUser;
+    return sessionUser;
   };
 
   const signup = async (userData) => {
     setLoading(true);
     await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    const newUser = {
+
+    const accounts = getAccounts();
+    if (accounts.some(a => a.email === userData.email)) {
+      setLoading(false);
+      throw new Error('Account with this email already exists');
+    }
+
+    const initialXp = 0;
+    const { rank, level } = calculateRankAndLevel(initialXp);
+
+    const newAccount = {
       ...userData,
       id: Math.random().toString(36).substr(2, 9),
-      rank: 'Novice',
-      level: 1,
+      xp: initialXp,
+      streak: 0,
+      rank: rank,
+      level: level,
       status: 'Online',
       joinedAt: new Date().toISOString(),
-      bestSeasonalRank: 'Unranked',
+      bestSeasonalRank: rank,
       bestSeasonalPlacement: 'N/A',
-      allTimeLevel: 1,
+      allTimeLevel: level,
       allTimePlacement: 'N/A'
     };
-    
-    localStorage.setItem('prisma_user', JSON.stringify(newUser));
-    setUser(newUser);
+
+    localStorage.setItem('prisma_accounts', JSON.stringify([...accounts, newAccount]));
+
+    const { password: _, ...sessionUser } = newAccount;
+    localStorage.setItem('prisma_user', JSON.stringify(sessionUser));
+    setUser(sessionUser);
     setLoading(false);
-    return newUser;
+    return sessionUser;
   };
 
   const logout = () => {
@@ -72,8 +91,45 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
+  const updateUserStats = async (xpGain) => {
+    if (!user) return;
+
+    const accounts = getAccounts();
+    const accountIndex = accounts.findIndex(a => a.id === user.id);
+
+    if (accountIndex === -1) return;
+
+    const account = accounts[accountIndex];
+    const newXp = (account.xp || 0) + xpGain;
+    const { rank, level } = calculateRankAndLevel(newXp);
+
+    const updatedAccount = {
+      ...account,
+      xp: newXp,
+      rank: rank,
+      level: level,
+      allTimeLevel: Math.max(account.allTimeLevel || 0, level)
+    };
+
+    accounts[accountIndex] = updatedAccount;
+    localStorage.setItem('prisma_accounts', JSON.stringify(accounts));
+
+    const { password: _, ...sessionUser } = updatedAccount;
+    localStorage.setItem('prisma_user', JSON.stringify(sessionUser));
+    setUser(sessionUser);
+  };
+
   return (
-    <AuthContext.Provider value={{ user, loading, login, signup, logout, isAuthenticated: !!user }}>
+    <AuthContext.Provider value={{
+      user,
+      ...gamificationStats,
+      loading,
+      login,
+      signup,
+      logout,
+      updateUserStats,
+      isAuthenticated: !!user
+    }}>
       {children}
     </AuthContext.Provider>
   );

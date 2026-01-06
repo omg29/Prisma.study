@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  X, 
-  Youtube, 
-  BookOpen, 
-  Upload, 
-  Sparkles, 
-  ChevronRight, 
-  FileText, 
+import {
+  X,
+  Youtube,
+  BookOpen,
+  Upload,
+  Sparkles,
+  ChevronRight,
+  FileText,
   CheckCircle2,
   Loader2,
   Plus,
@@ -16,7 +16,7 @@ import {
 import GlassCard from './GlassCard';
 import { LiquidButton } from './ui/LiquidButton';
 import { useLibrary } from '../context/LibraryContext';
-import { AP_SYLLABUS } from '../data/syllabus';
+import { AP_SYLLABUS, UNIT_CONTENT } from '../data/syllabus';
 
 const TABS = [
   { id: 'youtube', label: 'YouTube Video', icon: <Youtube size={18} />, color: 'text-red-500' },
@@ -25,20 +25,20 @@ const TABS = [
   { id: 'manual', label: 'Manual Input', icon: <Sparkles size={18} />, color: 'text-purple' },
 ];
 
-const CreateKitModal = ({ isOpen, onClose, kitId = null }) => {
+const CreateKitModal = ({ isOpen, onClose, kitId = null, initialFolderId = '' }) => {
   const { addKit, addMaterialToKit, folders, addFolder } = useLibrary();
   const [activeTab, setActiveTab] = useState('youtube');
   const [step, setStep] = useState(1); // 1: Input, 2: Processing, 3: Filing/Success
   const [newFolderMode, setNewFolderMode] = useState(false);
   const [newFolderName, setNewFolderName] = useState('');
-  
+
   const [formData, setFormData] = useState({
     url: '',
     subject: '',
     unit: '',
     text: '',
     prompt: '',
-    folderId: ''
+    folderId: initialFolderId
   });
 
   const availableUnits = formData.subject ? AP_SYLLABUS[formData.subject] : [];
@@ -46,47 +46,59 @@ const CreateKitModal = ({ isOpen, onClose, kitId = null }) => {
   useEffect(() => {
     if (isOpen) {
       setStep(1);
-      setFormData({ url: '', subject: '', unit: '', text: '', prompt: '', folderId: '' });
+      setFormData({ url: '', subject: '', unit: '', text: '', prompt: '', folderId: initialFolderId });
+      setNewFolderMode(false);
     }
-  }, [isOpen]);
+  }, [isOpen, initialFolderId]);
 
   const handleAction = async () => {
     setStep(2);
     // Simulate high-fidelity ingestion
     await new Promise(resolve => setTimeout(resolve, 2000));
-    
+
     if (kitId) {
       // Add materials to existing kit
       let materialData = {};
       if (activeTab === 'youtube') materialData = { url: formData.url };
       if (activeTab === 'manual') materialData = { text: formData.prompt };
-      if (activeTab === 'curriculum') materialData = { unitMapping: { subject: formData.subject, unit: formData.unit } };
-      
+      if (activeTab === 'curriculum') {
+        const autoContent = UNIT_CONTENT[formData.subject]?.[formData.unit] || '';
+        materialData = {
+          unitMapping: { subject: formData.subject, unit: formData.unit },
+          text: autoContent
+        };
+      }
+
       addMaterialToKit(kitId, activeTab, materialData);
       setStep(3);
     } else {
-      // Create new kit
+      // Create new unit
       let finalFolderId = formData.folderId;
       if (newFolderMode && newFolderName) {
         const folder = addFolder(newFolderName);
         finalFolderId = folder.id;
       }
 
-      let title = "New Study Resource";
+      let title = "New Course Unit";
+      let textData = formData.prompt;
+
       if (activeTab === 'youtube') title = "Video Analysis: " + (formData.url.substring(0, 15));
-      if (activeTab === 'curriculum') title = `${formData.subject}: ${formData.unit || 'Topic Study'}`;
+      if (activeTab === 'curriculum') {
+        title = `${formData.subject}: ${formData.unit || 'Topic Study'}`;
+        textData = UNIT_CONTENT[formData.subject]?.[formData.unit] || `Curriculum summary for ${formData.unit}`;
+      }
       if (activeTab === 'manual') title = formData.prompt.substring(0, 30);
 
       addKit({
         title,
         sources: [activeTab],
         content: {
-          textData: activeTab === 'manual' ? formData.prompt : '',
+          textData: textData,
           unitMapping: activeTab === 'curriculum' ? { subject: formData.subject, unit: formData.unit } : null,
           videoUrls: activeTab === 'youtube' ? [formData.url] : []
         }
       }, finalFolderId);
-      
+
       setStep(3);
     }
 
@@ -112,9 +124,9 @@ const CreateKitModal = ({ isOpen, onClose, kitId = null }) => {
               </div>
               <div>
                 <h2 className="text-xl font-black text-white tracking-tight">
-                  {kitId ? 'Add Materials to Kit' : 'Create New Study Kit'}
+                  {kitId ? 'Update Unit Content' : 'Create Course Unit'}
                 </h2>
-                <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest leading-none">Prisma Academic Library Ingestion</p>
+                <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest leading-none">Prisma Academic Unit Ingestion</p>
               </div>
             </div>
             <button onClick={onClose} className="p-2 hover:bg-white/5 rounded-full transition-colors">
@@ -133,16 +145,15 @@ const CreateKitModal = ({ isOpen, onClose, kitId = null }) => {
               >
                 {/* Sidebar Tabs */}
                 <div className="w-52 border-r border-white/5 bg-white/[0.01] p-4 flex flex-col gap-2">
-                  <p className="text-[9px] font-black text-zinc-600 uppercase tracking-widest px-4 mb-2">Ingestion Mode</p>
+                  <p className="text-[9px] font-black text-zinc-600 uppercase tracking-widest px-4 mb-2">Source Type</p>
                   {TABS.map((tab) => (
                     <button
                       key={tab.id}
                       onClick={() => setActiveTab(tab.id)}
-                      className={`flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all duration-300 group ${
-                        activeTab === tab.id 
-                        ? 'bg-white/[0.05] text-white border border-white/10' 
+                      className={`flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all duration-300 group ${activeTab === tab.id
+                        ? 'bg-white/[0.05] text-white border border-white/10'
                         : 'text-zinc-500 hover:text-zinc-300'
-                      }`}
+                        }`}
                     >
                       <span className={activeTab === tab.id ? tab.color : 'text-zinc-700 group-hover:text-zinc-500'}>
                         {tab.icon}
@@ -160,12 +171,12 @@ const CreateKitModal = ({ isOpen, onClose, kitId = null }) => {
                       <div className="space-y-4">
                         <div className="space-y-2">
                           <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 mb-1 block">Video Stream URL</label>
-                          <input 
-                            type="text" 
+                          <input
+                            type="text"
                             placeholder="https://youtube.com/watch?v=..."
                             className="w-full bg-[#1A1A1A] border border-white/20 rounded-xl py-4 px-5 text-sm focus:outline-none focus:border-cyan-bright/50 transition-all font-medium text-white placeholder:text-zinc-700"
                             value={formData.url}
-                            onChange={(e) => setFormData({...formData, url: e.target.value})}
+                            onChange={(e) => setFormData({ ...formData, url: e.target.value })}
                           />
                         </div>
                       </div>
@@ -175,10 +186,10 @@ const CreateKitModal = ({ isOpen, onClose, kitId = null }) => {
                       <div className="space-y-4">
                         <div className="space-y-2">
                           <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 block">AP Subject Selection</label>
-                          <select 
+                          <select
                             className="w-full bg-[#1A1A1A] border border-white/20 rounded-xl py-4 px-5 text-sm focus:outline-none focus:border-cyan-bright/50 transition-all font-medium text-white appearance-none cursor-pointer"
                             value={formData.subject}
-                            onChange={(e) => setFormData({...formData, subject: e.target.value, unit: ''})}
+                            onChange={(e) => setFormData({ ...formData, subject: e.target.value, unit: '' })}
                           >
                             <option value="" className="bg-[#1A1A1A]">Select AP Subject</option>
                             {Object.keys(AP_SYLLABUS).map(sub => (
@@ -189,10 +200,10 @@ const CreateKitModal = ({ isOpen, onClose, kitId = null }) => {
                         {formData.subject && (
                           <div className="space-y-2">
                             <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 block">Master Syllabus Unit</label>
-                            <select 
+                            <select
                               className="w-full bg-[#1A1A1A] border border-white/20 rounded-xl py-4 px-5 text-sm focus:outline-none focus:border-cyan-bright/50 transition-all font-medium text-white appearance-none cursor-pointer"
                               value={formData.unit}
-                              onChange={(e) => setFormData({...formData, unit: e.target.value})}
+                              onChange={(e) => setFormData({ ...formData, unit: e.target.value })}
                             >
                               <option value="" className="bg-[#1A1A1A]">Select Master Unit</option>
                               {availableUnits.map(unit => (
@@ -207,43 +218,43 @@ const CreateKitModal = ({ isOpen, onClose, kitId = null }) => {
                     {activeTab === 'manual' && (
                       <div className="space-y-2 h-full flex flex-col">
                         <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 block">Academic Content Input</label>
-                        <textarea 
+                        <textarea
                           placeholder="Paste your study notes or type academic content here..."
                           className="flex-1 w-full bg-[#1A1A1A] border border-white/20 rounded-xl py-5 px-5 text-sm focus:outline-none focus:border-purple/50 transition-all font-medium text-white resize-none h-48 placeholder:text-zinc-700"
                           value={formData.prompt}
-                          onChange={(e) => setFormData({...formData, prompt: e.target.value})}
+                          onChange={(e) => setFormData({ ...formData, prompt: e.target.value })}
                         />
                       </div>
                     )}
 
-                    {/* Folder Selection (Only for New Kit) */}
+                    {/* Folder Selection (Only for New Unit) */}
                     {!kitId && (
                       <div className="pt-6 border-t border-white/5 space-y-4">
                         <div className="flex items-center justify-between">
-                           <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 mb-1 block">Library Placement</label>
-                           <button 
-                             onClick={() => setNewFolderMode(!newFolderMode)}
-                             className="text-[9px] font-black text-cyan-bright uppercase tracking-widest hover:underline"
-                           >
-                             {newFolderMode ? 'Select Existing' : 'Create New Folder'}
-                           </button>
+                          <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 mb-1 block">Course Selection</label>
+                          <button
+                            onClick={() => setNewFolderMode(!newFolderMode)}
+                            className="text-[9px] font-black text-cyan-bright uppercase tracking-widest hover:underline"
+                          >
+                            {newFolderMode ? 'Select Existing' : 'Create New Course'}
+                          </button>
                         </div>
-                        
+
                         {newFolderMode ? (
-                          <input 
-                            type="text" 
-                            placeholder="e.g. Fall Semester - AP Bio"
+                          <input
+                            type="text"
+                            placeholder="e.g. AP World History"
                             className="w-full bg-[#1A1A1A] border border-white/20 rounded-xl py-3.5 px-5 text-sm focus:outline-none focus:border-cyan-bright/50 transition-all font-medium text-white"
                             value={newFolderName}
                             onChange={(e) => setNewFolderName(e.target.value)}
                           />
                         ) : (
-                          <select 
+                          <select
                             className="w-full bg-[#1A1A1A] border border-white/20 rounded-xl py-3.5 px-5 text-sm focus:outline-none focus:border-cyan-bright/50 transition-all font-medium text-white appearance-none cursor-pointer"
                             value={formData.folderId}
-                            onChange={(e) => setFormData({...formData, folderId: e.target.value})}
+                            onChange={(e) => setFormData({ ...formData, folderId: e.target.value })}
                           >
-                            <option value="">Select Folder</option>
+                            <option value="">Select Course</option>
                             {folders.map(f => (
                               <option key={f.id} value={f.id}>{f.name}</option>
                             ))}
@@ -254,13 +265,13 @@ const CreateKitModal = ({ isOpen, onClose, kitId = null }) => {
                   </div>
 
                   <div className="mt-8">
-                    <LiquidButton 
+                    <LiquidButton
                       onClick={handleAction}
-                      variant="primary" 
+                      variant="primary"
                       className="w-full py-4 !from-[#43C6F1] !to-[#E063F1] shadow-[0_0_30px_rgba(67,198,241,0.2)]"
                     >
                       <span className="font-black uppercase tracking-widest text-xs flex items-center gap-2">
-                        {kitId ? 'Expand Library Meta' : 'Integrate Study Kit'} <ChevronRight size={16} strokeWidth={3} />
+                        {kitId ? 'Update Unit Metadata' : 'Integrate Course Unit'} <ChevronRight size={16} strokeWidth={3} />
                       </span>
                     </LiquidButton>
                   </div>
@@ -287,9 +298,9 @@ const CreateKitModal = ({ isOpen, onClose, kitId = null }) => {
                     </div>
                   </motion.div>
                 </div>
-                
-                <h3 className="text-2xl font-black text-white mb-2 tracking-tighter uppercase">Analyzing Academic Material</h3>
-                <p className="text-zinc-500 font-bold uppercase tracking-[0.2em] text-[10px]">Updating Internal Library Metadata...</p>
+
+                <h3 className="text-2xl font-black text-white mb-2 tracking-tighter uppercase">Analyzing Academic Unit</h3>
+                <p className="text-zinc-500 font-bold uppercase tracking-[0.2em] text-[10px]">Updating Course Library...</p>
               </motion.div>
             )}
 
@@ -307,8 +318,8 @@ const CreateKitModal = ({ isOpen, onClose, kitId = null }) => {
                 >
                   <CheckCircle2 size={40} className="text-green-500" />
                 </motion.div>
-                <h3 className="text-2xl font-black text-white mb-2 tracking-tighter uppercase">Library Updated</h3>
-                <p className="text-zinc-500 font-medium">Material successfully integrated into your repository.</p>
+                <h3 className="text-2xl font-black text-white mb-2 tracking-tighter uppercase">Course Updated</h3>
+                <p className="text-zinc-500 font-medium">Unit successfully integrated into your repository.</p>
               </motion.div>
             )}
           </AnimatePresence>
